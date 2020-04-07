@@ -61,13 +61,15 @@
             this.ACTypeTextBox = new System.Windows.Forms.TextBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.GetAPTButton = new System.Windows.Forms.Button();
-            this.AddApprTextBox = new System.Windows.Forms.TextBox();
             this.AddParkedTextBox = new System.Windows.Forms.TextBox();
+            this.DistanceNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.AddApprTextBox = new System.Windows.Forms.TextBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.DistanceLabel = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.DistanceNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
+            this.ShowAppHxCheckBox = new System.Windows.Forms.CheckBox();
+            this.ShowParkHxCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.RulesTrackBar)).BeginInit();
             this.WeightGroupBox.SuspendLayout();
             this.EngineGroupBox.SuspendLayout();
@@ -441,22 +443,37 @@
             this.GetAPTButton.UseVisualStyleBackColor = true;
             this.GetAPTButton.Click += new System.EventHandler(this.GetAPTButton_Click);
             // 
-            // AddApprTextBox
-            // 
-            this.AddApprTextBox.Location = new System.Drawing.Point(147, 520);
-            this.AddApprTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.AddApprTextBox.Name = "AddApprTextBox";
-            this.AddApprTextBox.Size = new System.Drawing.Size(242, 26);
-            this.AddApprTextBox.TabIndex = 19;
-            // 
             // AddParkedTextBox
             // 
             this.AddParkedTextBox.Location = new System.Drawing.Point(147, 565);
             this.AddParkedTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.AddParkedTextBox.Name = "AddParkedTextBox";
-            this.AddParkedTextBox.Size = new System.Drawing.Size(242, 26);
+            this.AddParkedTextBox.Size = new System.Drawing.Size(198, 26);
             this.AddParkedTextBox.TabIndex = 20;
             this.toolTip1.SetToolTip(this.AddParkedTextBox, "Create the add parked AC command.\r\nThis is automatically copied to clipboard.");
+            // 
+            // DistanceNumericUpDown
+            // 
+            this.DistanceNumericUpDown.Location = new System.Drawing.Point(110, 475);
+            this.DistanceNumericUpDown.Name = "DistanceNumericUpDown";
+            this.DistanceNumericUpDown.Size = new System.Drawing.Size(91, 26);
+            this.DistanceNumericUpDown.TabIndex = 25;
+            this.toolTip1.SetToolTip(this.DistanceNumericUpDown, "Approach distance from runway threshold.\r\nAllowable zero to 100 nautical miles.\r\n" +
+        "Must be changed using up/down buttons.");
+            this.DistanceNumericUpDown.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.DistanceNumericUpDown.ValueChanged += new System.EventHandler(this.DistanceNumericUpDown_ValueChanged);
+            // 
+            // AddApprTextBox
+            // 
+            this.AddApprTextBox.Location = new System.Drawing.Point(146, 519);
+            this.AddApprTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.AddApprTextBox.Name = "AddApprTextBox";
+            this.AddApprTextBox.Size = new System.Drawing.Size(199, 26);
+            this.AddApprTextBox.TabIndex = 19;
             // 
             // openFileDialog1
             // 
@@ -483,21 +500,6 @@
             this.label1.TabIndex = 24;
             this.label1.Text = "VFR/IFR rule probability";
             // 
-            // DistanceNumericUpDown
-            // 
-            this.DistanceNumericUpDown.Location = new System.Drawing.Point(110, 475);
-            this.DistanceNumericUpDown.Name = "DistanceNumericUpDown";
-            this.DistanceNumericUpDown.Size = new System.Drawing.Size(91, 26);
-            this.DistanceNumericUpDown.TabIndex = 25;
-            this.toolTip1.SetToolTip(this.DistanceNumericUpDown, "Approach distance from runway threshold.\r\nAllowable zero to 100 nautical miles.\r\n" +
-        "Must be changed using up/down buttons.");
-            this.DistanceNumericUpDown.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.DistanceNumericUpDown.ValueChanged += new System.EventHandler(this.DistanceNumericUpDown_ValueChanged);
-            // 
             // label2
             // 
             this.label2.AutoSize = true;
@@ -509,11 +511,35 @@
             this.label2.Text = "Open APT file you are using, then select options.  \r\nText command is automaticall" +
     "y copied to clipboard.";
             // 
+            // ShowAppHxCheckBox
+            // 
+            this.ShowAppHxCheckBox.AutoSize = true;
+            this.ShowAppHxCheckBox.Location = new System.Drawing.Point(352, 519);
+            this.ShowAppHxCheckBox.Name = "ShowAppHxCheckBox";
+            this.ShowAppHxCheckBox.Size = new System.Drawing.Size(98, 24);
+            this.ShowAppHxCheckBox.TabIndex = 27;
+            this.ShowAppHxCheckBox.Text = "Show Hx";
+            this.ShowAppHxCheckBox.UseVisualStyleBackColor = true;
+            this.ShowAppHxCheckBox.CheckedChanged += new System.EventHandler(this.ShowAppHxCheckBox_CheckedChanged);
+            // 
+            // ShowParkHxCheckBox
+            // 
+            this.ShowParkHxCheckBox.AutoSize = true;
+            this.ShowParkHxCheckBox.Location = new System.Drawing.Point(352, 564);
+            this.ShowParkHxCheckBox.Name = "ShowParkHxCheckBox";
+            this.ShowParkHxCheckBox.Size = new System.Drawing.Size(98, 24);
+            this.ShowParkHxCheckBox.TabIndex = 28;
+            this.ShowParkHxCheckBox.Text = "Show Hx";
+            this.ShowParkHxCheckBox.UseVisualStyleBackColor = true;
+            this.ShowParkHxCheckBox.CheckedChanged += new System.EventHandler(this.ShowParkHxCheckBox_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(502, 600);
+            this.ClientSize = new System.Drawing.Size(502, 621);
+            this.Controls.Add(this.ShowParkHxCheckBox);
+            this.Controls.Add(this.ShowAppHxCheckBox);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.DistanceNumericUpDown);
             this.Controls.Add(this.label1);
@@ -595,6 +621,8 @@
         private System.Windows.Forms.RadioButton AnyEngineRadioButton;
         private System.Windows.Forms.NumericUpDown DistanceNumericUpDown;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.CheckBox ShowAppHxCheckBox;
+        private System.Windows.Forms.CheckBox ShowParkHxCheckBox;
     }
 }
 

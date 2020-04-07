@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using System.Globalization;
 using System.IO;
 
 
@@ -21,24 +22,62 @@ namespace TT_Assist
 
         private void AddRWYButton_Click(object sender, EventArgs e)
         {
-            RWYListBox.Items.Add(RWYTextBox.Text);
+            bool RWYfound = false;
+            if (RWYTextBox.TextLength != 0)
+            {
+                foreach (string item in RWYListBox.Items)
+                {
+                    if (item == RWYTextBox.Text) RWYfound = true;
+                }
+                if (RWYfound)
+                    MessageBox.Show("That runway is already in the list.");
+                else
+                    RWYListBox.Items.Add(RWYTextBox.Text);
+            }
+            else
+                MessageBox.Show("Place a runway identifier in the text box first.");
         }
 
         private void DelRWYButton_Click(object sender, EventArgs e)
         {
-            if (RWYListBox.SelectedIndex != -1)
-                RWYListBox.Items.RemoveAt(RWYListBox.SelectedIndex);
+            if (RWYListBox.Items.Count != 0)
+            {
+                if (RWYListBox.SelectedIndex != -1)
+                    RWYListBox.Items.RemoveAt(RWYListBox.SelectedIndex);
+                else
+                    MessageBox.Show("Select a runway identifier in the runway list box to delete.");
+            }
+            else MessageBox.Show("There are no runways in the list to delete.");
         }
 
         private void GateAddButton_Click(object sender, EventArgs e)
         {
-            GatesListBox.Items.Add(GatesTextBox.Text);
+            bool Gatefound = false;
+            if (GatesTextBox.TextLength != 0)
+            {
+                foreach(string item in GatesListBox.Items)
+                {
+                    if (item == GatesTextBox.Text) Gatefound = true;
+                }
+                if (Gatefound)
+                    MessageBox.Show("That gate is already in the list.");
+                else
+                    GatesListBox.Items.Add(GatesTextBox.Text);
+            }
+            else
+                MessageBox.Show("Place a gate in the text box first.");
         }
 
         private void DelGateButton_Click(object sender, EventArgs e)
         {
-            if (GatesListBox.SelectedIndex != -1)
-                GatesListBox.Items.RemoveAt(GatesListBox.SelectedIndex);
+            if (GatesListBox.Items.Count != 0)
+            {
+                if (GatesListBox.SelectedIndex != -1)
+                    GatesListBox.Items.RemoveAt(GatesListBox.SelectedIndex);
+                else
+                    MessageBox.Show("Select a gate in the gate list box to delete.");
+            }
+            else MessageBox.Show("There are no gates in the list to delete.");
         }
 
         private void GetAPTButton_Click(object sender, EventArgs e)
@@ -100,12 +139,21 @@ namespace TT_Assist
 
         private void LargeRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            if (LargeRadioButton.Checked) wt = "l";
+            if (LargeRadioButton.Checked)
+            {
+                wt = "l";
+                RulesTrackBar.Value = 100;
+            }
+
         }
 
         private void HeavyRadioButton_CheckedChanged(object sender, EventArgs e)
         {
-            if (HeavyRadioButton.Checked) wt = "h";
+            if (HeavyRadioButton.Checked)
+            {
+                wt = "h";
+                RulesTrackBar.Value = 100;
+            }
         }
 
         private void PropRadioButton_CheckedChanged(object sender, EventArgs e)
@@ -136,25 +184,43 @@ namespace TT_Assist
         private void AddParkedButton_Click(object sender, EventArgs e)
         {
             string gate = SelectItem(GatesListBox);
-            string weight; string engine;
-            string rule = SelectRule();
-            if (wt == "?") weight = SelectWt(); else weight = wt;
-            if (eng == "?") engine = SelectEngine(); else engine = eng;
-            AddParkedTextBox.Text = "add " + rule + " " + weight + " " + engine + " @" + gate;
-            if (ACType.Length != 0) AddParkedTextBox.Text += " " + ACType;
-            Clipboard.SetText(AddParkedTextBox.Text);
+            if (gate.Length != 0)
+            {
+                string weight; string engine;
+                string rule = SelectRule();
+                string cr = Environment.NewLine;
+                if (wt == "?") weight = SelectWt(); else weight = wt;
+                if (eng == "?") engine = SelectEngine(); else engine = eng;
+                string command = "add " + rule + " " + weight + " " + engine + " @" + gate + " ";
+                if (ACType.Length != 0) command += " " + ACType;
+                if ((ShowParkHxCheckBox.Checked) && (AddParkedButton.Text.Length != 0))
+                    AddParkedTextBox.Text += cr + command;
+                else
+                    AddParkedTextBox.Text = command;
+                Clipboard.SetText(command);
+            }
+            else MessageBox.Show("You need at least one gate in list box to create a valid command.");
         }
 
         private void AddApprButton_Click(object sender, EventArgs e)
         {
             string runway = SelectItem(RWYListBox);
-            string weight; string engine;
-            string rule = SelectRule();
-            if (wt == "?") weight = SelectWt(); else weight = wt;
-            if (eng == "?") engine = SelectEngine(); else engine = eng;
-            AddApprTextBox.Text = "add " + rule + " " + weight + " " + engine + " " + runway + " " + distance;
-            if (ACType.Length != 0) AddApprTextBox.Text += " " + ACType;
-            Clipboard.SetText(AddApprTextBox.Text);
+            if (runway.Length != 0)
+            {
+                string weight; string engine;
+                string rule = SelectRule();
+                string cr = Environment.NewLine;
+                if (wt == "?") weight = SelectWt(); else weight = wt;
+                if (eng == "?") engine = SelectEngine(); else engine = eng;
+                string command = "add " + rule + " " + weight + " " + engine + " " + runway + " " + distance;
+                if (ACType.Length != 0) command += " " + ACType;
+                if ((ShowAppHxCheckBox.Checked) && (AddApprTextBox.Text.Length != 0))
+                    AddApprTextBox.Text += cr + command;
+                else
+                    AddApprTextBox.Text = command;
+                Clipboard.SetText(command);
+            }
+            else MessageBox.Show("You need at least one runway in list box to create a valid command.");
         }
 
         private void AnyWtRadioButton_CheckedChanged(object sender, EventArgs e)
@@ -201,7 +267,7 @@ namespace TT_Assist
             if (listCount != 0)
             {
                 int selectedCount = listBox.SelectedItems.Count;
-                int test = RandomNumber(); int i = 0; int incr = 0;
+                int test = RandomNumber(); int i = 0; int incr;
                 bool itemFound = false; 
                 switch (selectedCount)
                 {
@@ -234,7 +300,6 @@ namespace TT_Assist
                         break;
                 }
             }
-            else MessageBox.Show("You need at least one runway in list box to create a valid command.");
             return result;
         }
 
@@ -242,6 +307,54 @@ namespace TT_Assist
         private void DistanceNumericUpDown_ValueChanged(object sender, EventArgs e)
         {
             distance = DistanceNumericUpDown.Value.ToString();
+            if (distance.Length == 0)
+            {
+                MessageBox.Show("This entry cannot be blank.");
+                distance = "10";
+                DistanceNumericUpDown.Value = 10;
+            }
+        }
+
+        private void ShowAppHxCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            string cr = Environment.NewLine;
+            if (ShowAppHxCheckBox.Checked)
+            {
+                AddApprTextBox.Multiline = true;
+                AddApprTextBox.ScrollBars = ScrollBars.Vertical;
+            }
+            else
+            {
+                AddApprTextBox.Multiline = false;
+                AddApprTextBox.ScrollBars = ScrollBars.None;
+                int Loc1 = AddApprTextBox.Text.LastIndexOf(cr);
+                if (Loc1 != -1)
+                {
+                    Loc1 += cr.Length;
+                    AddApprTextBox.Text = AddApprTextBox.Text.Substring(Loc1, AddApprTextBox.TextLength - Loc1);
+                }
+            }
+        }
+
+        private void ShowParkHxCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            string cr = Environment.NewLine;
+            if (ShowParkHxCheckBox.Checked)
+            {
+                AddParkedTextBox.Multiline = true;
+                AddParkedTextBox.ScrollBars = ScrollBars.Vertical;
+            }
+            else
+            {
+                AddParkedTextBox.Multiline = false;
+                AddParkedTextBox.ScrollBars = ScrollBars.None;
+                int Loc1 = AddParkedTextBox.Text.LastIndexOf(cr);
+                if (Loc1 != -1)
+                {
+                    Loc1 += cr.Length;
+                    AddParkedTextBox.Text = AddParkedTextBox.Text.Substring(Loc1, AddParkedTextBox.TextLength - Loc1);
+                }
+            }
         }
     }
 }

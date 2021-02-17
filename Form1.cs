@@ -12,6 +12,9 @@ namespace TT_Assist
         public string eng = "?";
         public string distance = "10";
         public string ACType = string.Empty;
+        public readonly string cr = Environment.NewLine;
+        public bool APTfileLoaded = false;
+        private readonly string TT_Title = "Tower Trainer Assistant";
 
         public Form1()
         {
@@ -22,20 +25,25 @@ namespace TT_Assist
 
         private void AddRWYButton_Click(object sender, EventArgs e)
         {
-            bool RWYfound = false;
-            if (RWYTextBox.TextLength != 0)
+            if (APTfileLoaded)
             {
-                foreach (string item in RWYListBox.Items)
+                bool RWYfound = false;
+                if (RWYTextBox.TextLength != 0)
                 {
-                    if (item == RWYTextBox.Text) RWYfound = true;
+                    foreach (string item in RWYListBox.Items)
+                    {
+                        if (item == RWYTextBox.Text) RWYfound = true;
+                    }
+                    if (RWYfound)
+                        MessageBox.Show("That runway is already in the list.", TT_Title);
+                    else
+                        RWYListBox.Items.Add(RWYTextBox.Text);
                 }
-                if (RWYfound)
-                    MessageBox.Show("That runway is already in the list.");
                 else
-                    RWYListBox.Items.Add(RWYTextBox.Text);
+                    MessageBox.Show("Place a runway identifier in the text box first.", TT_Title);
             }
             else
-                MessageBox.Show("Place a runway identifier in the text box first.");
+                MessageBox.Show("You must first Read an APT file to add Runways", TT_Title);
         }
 
         private void DelRWYButton_Click(object sender, EventArgs e)
@@ -45,27 +53,32 @@ namespace TT_Assist
                 if (RWYListBox.SelectedIndex != -1)
                     RWYListBox.Items.RemoveAt(RWYListBox.SelectedIndex);
                 else
-                    MessageBox.Show("Select a runway identifier in the runway list box to delete.");
+                    MessageBox.Show("Select a runway identifier in the runway list box to delete.", TT_Title);
             }
-            else MessageBox.Show("There are no runways in the list to delete.");
+            else MessageBox.Show("There are no runways in the list to delete.", TT_Title);
         }
 
         private void GateAddButton_Click(object sender, EventArgs e)
         {
-            bool Gatefound = false;
-            if (GatesTextBox.TextLength != 0)
+            if (APTfileLoaded)
             {
-                foreach(string item in GatesListBox.Items)
+                bool Gatefound = false;
+                if (GatesTextBox.TextLength != 0)
                 {
-                    if (item == GatesTextBox.Text) Gatefound = true;
+                    foreach (string item in GatesListBox.Items)
+                    {
+                        if (item == GatesTextBox.Text) Gatefound = true;
+                    }
+                    if (Gatefound)
+                        MessageBox.Show("That gate is already in the list.", TT_Title);
+                    else
+                        GatesListBox.Items.Add(GatesTextBox.Text);
                 }
-                if (Gatefound)
-                    MessageBox.Show("That gate is already in the list.");
                 else
-                    GatesListBox.Items.Add(GatesTextBox.Text);
+                    MessageBox.Show("Place a gate in the text box first.", TT_Title);
             }
             else
-                MessageBox.Show("Place a gate in the text box first.");
+                MessageBox.Show("You must first Read an APT file to add Gates", TT_Title);
         }
 
         private void DelGateButton_Click(object sender, EventArgs e)
@@ -75,9 +88,9 @@ namespace TT_Assist
                 if (GatesListBox.SelectedIndex != -1)
                     GatesListBox.Items.RemoveAt(GatesListBox.SelectedIndex);
                 else
-                    MessageBox.Show("Select a gate in the gate list box to delete.");
+                    MessageBox.Show("Select a gate in the gate list box to delete.", TT_Title);
             }
-            else MessageBox.Show("There are no gates in the list to delete.");
+            else MessageBox.Show("There are no gates in the list to delete.", TT_Title);
         }
 
         private void GetAPTButton_Click(object sender, EventArgs e)
@@ -93,7 +106,7 @@ namespace TT_Assist
                 DefaultExt = "apt",
                 Filter = "apt files (*.apt)|*.apt|All files (*.*)|*.*",
                 FilterIndex = 2,
-                RestoreDirectory = true,
+                RestoreDirectory = false,
                 ReadOnlyChecked = true,
                 ShowReadOnly = true
             };
@@ -119,6 +132,9 @@ namespace TT_Assist
                         }
                     }
                 }
+                APTfileLoaded = (RWYListBox.Items.Count != 0);
+                if (!APTfileLoaded)
+                    MessageBox.Show("ERROR! Invalid APT file.  Please try again.", TT_Title);
             }
         }
         private int RandomNumber()
@@ -183,44 +199,54 @@ namespace TT_Assist
 
         private void AddParkedButton_Click(object sender, EventArgs e)
         {
-            string gate = SelectItem(GatesListBox);
-            if (gate.Length != 0)
+            if (APTfileLoaded)
             {
-                string weight; string engine;
-                string rule = SelectRule();
-                string cr = Environment.NewLine;
-                if (wt == "?") weight = SelectWt(); else weight = wt;
-                if (eng == "?") engine = SelectEngine(); else engine = eng;
-                string command = "add " + rule + " " + weight + " " + engine + " @" + gate + " ";
-                if (ACType.Length != 0) command += " " + ACType;
-                if ((ShowParkHxCheckBox.Checked) && (AddParkedButton.Text.Length != 0))
-                    AddParkedTextBox.Text += cr + command;
-                else
-                    AddParkedTextBox.Text = command;
-                Clipboard.SetText(command);
+                string gate = SelectItem(GatesListBox);
+                if (gate.Length != 0)
+                {
+                    string weight; string engine;
+                    string rule = SelectRule();
+                    string cr = Environment.NewLine;
+                    if (wt == "?") weight = SelectWt(); else weight = wt;
+                    if (eng == "?") engine = SelectEngine(); else engine = eng;
+                    string command = "add " + rule + " " + weight + " " + engine + " @" + gate + " ";
+                    if (ACType.Length != 0) command += " " + ACType;
+                    if ((ShowParkHxCheckBox.Checked) && (AddParkedButton.Text.Length != 0))
+                        AddParkedTextBox.Text += cr + command;
+                    else
+                        AddParkedTextBox.Text = command;
+                    Clipboard.SetText(command);
+                }
+                else MessageBox.Show("You need at least one gate in list box to create a valid command.", TT_Title);
             }
-            else MessageBox.Show("You need at least one gate in list box to create a valid command.");
+            else
+                MessageBox.Show("You must Read an APT file before creating Add_AC commands", TT_Title);
         }
 
         private void AddApprButton_Click(object sender, EventArgs e)
         {
-            string runway = SelectItem(RWYListBox);
-            if (runway.Length != 0)
+            if (APTfileLoaded)
             {
-                string weight; string engine;
-                string rule = SelectRule();
-                string cr = Environment.NewLine;
-                if (wt == "?") weight = SelectWt(); else weight = wt;
-                if (eng == "?") engine = SelectEngine(); else engine = eng;
-                string command = "add " + rule + " " + weight + " " + engine + " " + runway + " " + distance;
-                if (ACType.Length != 0) command += " " + ACType;
-                if ((ShowAppHxCheckBox.Checked) && (AddApprTextBox.Text.Length != 0))
-                    AddApprTextBox.Text += cr + command;
-                else
-                    AddApprTextBox.Text = command;
-                Clipboard.SetText(command);
+                string runway = SelectItem(RWYListBox);
+                if (runway.Length != 0)
+                {
+                    string weight; string engine;
+                    string rule = SelectRule();
+                    string cr = Environment.NewLine;
+                    if (wt == "?") weight = SelectWt(); else weight = wt;
+                    if (eng == "?") engine = SelectEngine(); else engine = eng;
+                    string command = "add " + rule + " " + weight + " " + engine + " " + runway + " " + distance;
+                    if (ACType.Length != 0) command += " " + ACType;
+                    if ((ShowAppHxCheckBox.Checked) && (AddApprTextBox.Text.Length != 0))
+                        AddApprTextBox.Text += cr + command;
+                    else
+                        AddApprTextBox.Text = command;
+                    Clipboard.SetText(command);
+                }
+                else MessageBox.Show("You need at least one runway in list box to create a valid command.", TT_Title);
             }
-            else MessageBox.Show("You need at least one runway in list box to create a valid command.");
+            else
+                MessageBox.Show("You must Read an APT file before creating Add_AC commands", TT_Title);
         }
 
         private void AnyWtRadioButton_CheckedChanged(object sender, EventArgs e)
@@ -309,7 +335,7 @@ namespace TT_Assist
             distance = DistanceNumericUpDown.Value.ToString();
             if (distance.Length == 0)
             {
-                MessageBox.Show("This entry cannot be blank.");
+                MessageBox.Show("This entry cannot be blank.", TT_Title);
                 distance = "10";
                 DistanceNumericUpDown.Value = 10;
             }
@@ -355,6 +381,11 @@ namespace TT_Assist
                     AddParkedTextBox.Text = AddParkedTextBox.Text.Substring(Loc1, AddParkedTextBox.TextLength - Loc1);
                 }
             }
+        }
+
+        private void RWYListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            DelRWYButton.Enabled = (RWYListBox.Items.Count != 0);
         }
     }
 }
